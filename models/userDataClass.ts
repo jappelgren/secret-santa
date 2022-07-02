@@ -1,4 +1,5 @@
-class UserData {
+class UserDataClass {
+  id: string;
   name: string;
   email: string | null;
   idea1: string | null;
@@ -6,12 +7,14 @@ class UserData {
   idea3: string | null;
 
   constructor(
+    id: string,
     name: string,
     email: string | null,
     idea1: string | null,
     idea2: string | null,
     idea3: string | null
   ) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.idea1 = idea1;
@@ -24,4 +27,4 @@ class UserData {
   }
 }
 
-export default UserData;
+export default UserDataClass;

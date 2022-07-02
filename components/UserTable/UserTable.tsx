@@ -6,6 +6,7 @@ import Unchecked from '../../public/images/unchecked.svg';
 const UserTable: NextPage = () => {
   const tempUserState: UserData[] = [
     new UserData(
+      '239789gf32',
       'Gord',
       'gord@gord.gordman',
       'Fortnite',
@@ -13,13 +14,14 @@ const UserTable: NextPage = () => {
       'Justin Bateman'
     ),
     new UserData(
+      'wfeb97b23f',
       'Charles',
       'gord@gord.gordman',
       'Fortnite',
       'Batman',
       'Justin Bateman'
     ),
-    new UserData('Chunk', null, null, null, null),
+    new UserData('2354089hg', 'Chunk', null, null, null, null),
   ];
   return (
     <section className="flex justify-center items-center flex-col">

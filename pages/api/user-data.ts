@@ -1,39 +1,30 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { UserDataType, RequestMethod, MsgResponse } from '../../models';
 import * as fs from 'fs';
-
-type Data = {
-  name: string;
-  email: string;
-  idea1: string;
-  idea2: string;
-  idea3: string;
-};
-
-type MsgResponse = {
-  msg: string;
-};
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data[] | MsgResponse>
+  res: NextApiResponse<UserDataType[] | MsgResponse>
 ) {
   const requestMethod = req.method;
 
   switch (requestMethod) {
-    case 'GET':
+    case RequestMethod.GET:
       try {
-        const getResult: Data[] = getUserData();
+        const getResult: UserDataType[] = getUserData();
         res.send(getResult);
         break;
       } catch (error) {
         res.status(500).send({
-          msg: `An error occurred while reading user data. Error: ${error}`,
+          msg: `An error occurred while reading user data. Error: ${JSON.stringify(
+            error
+          )}`,
         });
         break;
       }
-    case 'POST':
+    case RequestMethod.POST:
       try {
-        const body: Data = req.body;
+        const body: UserDataType = req.body;
         const recordedData = postUserData(body);
         res.status(201).send({
           msg: `User data successfully recorded. userData: ${recordedData}`,
@@ -53,19 +44,19 @@ export default function handler(
   }
 }
 
-const getUserData = (): Data[] => {
+export const getUserData = (): UserDataType[] => {
   const allJsonFiles: string[] = fs.readdirSync('./models/userData');
   if (allJsonFiles && allJsonFiles.length < 1) {
     return [];
   }
-  const jsonArr: Data[] = allJsonFiles.map((data) => {
+  const jsonArr: UserDataType[] = allJsonFiles.map((data) => {
     const jsonHex: any = fs.readFileSync(`./models/userData/${data}`);
     return JSON.parse(jsonHex);
   });
   return jsonArr;
 };
 
-const postUserData = (userData: Data): number => {
+const postUserData = (userData: UserDataType): number => {
   if (
     !userData.name ||
     !userData.email ||
