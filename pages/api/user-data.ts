@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { UserDataType, RequestMethod, MsgResponse } from '../../models';
+import { IUserData, RequestMethod, MsgResponse } from '../../models';
 import * as fs from 'fs';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<UserDataType[] | MsgResponse>
+  res: NextApiResponse<IUserData[] | MsgResponse>
 ) {
   const requestMethod = req.method;
 
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const getResult: UserDataType[] = getUserData();
+        const getResult: IUserData[] = getUserData();
         res.send(getResult);
         break;
       } catch (error) {
@@ -24,7 +24,7 @@ export default function handler(
       }
     case RequestMethod.POST:
       try {
-        const body: UserDataType = req.body;
+        const body: IUserData = req.body;
         const recordedData = postUserData(body);
         res.status(201).send({
           msg: `User data successfully recorded. userData: ${recordedData}`,
@@ -44,19 +44,19 @@ export default function handler(
   }
 }
 
-export const getUserData = (): UserDataType[] => {
+export const getUserData = (): IUserData[] => {
   const allJsonFiles: string[] = fs.readdirSync('./models/userData');
   if (allJsonFiles && allJsonFiles.length < 1) {
     return [];
   }
-  const jsonArr: UserDataType[] = allJsonFiles.map((data) => {
+  const jsonArr: IUserData[] = allJsonFiles.map((data) => {
     const jsonHex: any = fs.readFileSync(`./models/userData/${data}`);
     return JSON.parse(jsonHex);
   });
   return jsonArr;
 };
 
-const postUserData = (userData: UserDataType): number => {
+const postUserData = (userData: IUserData): number => {
   if (
     !userData.name ||
     !userData.email ||

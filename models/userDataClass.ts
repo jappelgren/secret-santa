@@ -1,10 +1,12 @@
-class UserDataClass {
-  id: string;
-  name: string;
-  email: string | null;
-  idea1: string | null;
-  idea2: string | null;
-  idea3: string | null;
+import IUserData from './IUserData';
+
+class UserDataClass implements IUserData {
+  id;
+  name;
+  email;
+  idea1;
+  idea2;
+  idea3;
 
   constructor(
     id: string,
@@ -23,7 +25,7 @@ class UserDataClass {
   }
 
   giftIdeasComplete() {
-    return this.idea1 && this.idea2 && this.idea3
+    return this.idea1 && this.idea2 && this.idea3;
   }
 }
 
