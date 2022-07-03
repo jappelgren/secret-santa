@@ -1,6 +1,4 @@
-import { IUserData } from '.';
-
-export default class UserDataClass implements IUserData {
+export default class UserDataClass {
   id;
   name;
   email;
