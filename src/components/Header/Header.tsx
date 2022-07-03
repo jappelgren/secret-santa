@@ -9,6 +9,7 @@ export const Header: NextComponentType = () => {
     <header className="h-20 w-full flex flex-row justify-between p-4 items-center bg-green-600 overflow-hidden">
       <Image
         src="/images/holigabe_wreath.png"
+        alt="A picture of weird looking french bulldog's head sticking out of a christmas wreath."
         width="75px"
         height="75px"
         onClick={() => router.push('/')}

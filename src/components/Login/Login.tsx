@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import * as TypeChecks from '../../utils';
+import * as TypeChecks from '@/utils';
 import { useRouter } from 'next/router';
 
 const Login = () => {

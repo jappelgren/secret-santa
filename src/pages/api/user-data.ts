@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, RequestMethod, MsgResponse } from '../../models';
+import { IUserData, RequestMethod, MsgResponse } from '@/models';
 import * as fs from 'fs';
 
 export default function handler(

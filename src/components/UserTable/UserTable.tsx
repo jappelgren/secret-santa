@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { IUserData } from '../../models';
-import Checked from '../../public/images/checked.svg';
-import Unchecked from '../../public/images/unchecked.svg';
-import UserDataClass from '@/models/UserDataClass';
+import { IUserData, UserDataClass } from '@/models';
+import Checked from '/public/images/checked.svg';
+import Unchecked from '/public/images/unchecked.svg';
+// import * as UserModel from '@/models';
 
 const UserTable: NextPage = () => {
   const [userData, setUserData] = useState<UserDataClass[]>([]);

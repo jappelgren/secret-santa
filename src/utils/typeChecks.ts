@@ -1,4 +1,4 @@
-import { IUserData, MsgResponse } from '../models';
+import { IUserData, MsgResponse } from '@/models';
 
 export const isUserData = (x: any): x is IUserData =>
   x.id &&

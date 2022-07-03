@@ -1,6 +1,6 @@
-import IUserData from './IUserData';
+import { IUserData } from './';
 
-class UserDataClass implements IUserData {
+export default class UserDataClass implements IUserData {
   id;
   name;
   email;
@@ -28,5 +28,3 @@ class UserDataClass implements IUserData {
     return this.idea1 && this.idea2 && this.idea3;
   }
 }
-
-export default UserDataClass;
