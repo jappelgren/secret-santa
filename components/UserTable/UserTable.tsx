@@ -1,16 +1,10 @@
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD:src/components/UserTable/UserTable.tsx
-import { IUserData, UserDataClass } from '@/models';
+import { IUserData } from '../../models';
 import Checked from '/public/images/checked.svg';
 import Unchecked from '/public/images/unchecked.svg';
-=======
-import { IUserData } from '../../models';
-import Checked from '../../public/images/checked.svg';
-import Unchecked from '../../public/images/unchecked.svg';
 import UserDataClass from '../../models/UserDataClass';
->>>>>>> parent of b8832e7 (added src folder, added @ in tsconfig for shortcut to src when importing):components/UserTable/UserTable.tsx
 
 const UserTable: NextPage = () => {
   const [userData, setUserData] = useState<UserDataClass[]>([]);

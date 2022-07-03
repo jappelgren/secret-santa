@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, MsgResponse, RequestMethod } from '@/models';
-import { getUserData } from '@/pages/api/user-data';
+import { IUserData, MsgResponse, RequestMethod } from '../../../../models';
+import { getUserData } from '../../user-data';
 
 export default function handler(
   req: NextApiRequest,

@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import UserTable from '@/components/UserTable/UserTable';
+import UserTable from '../../components/UserTable/UserTable';
 
 const AdminPanel: NextPage = () => {
   return (

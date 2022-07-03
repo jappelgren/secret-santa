@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, MsgResponse, RequestMethod } from '../../../../models';
-import { getUserData } from '../../user-data';
+import { IUserData, MsgResponse, RequestMethod } from '../../../models';
+import { getUserData } from '../user-data';
 
 export default function handler(
   req: NextApiRequest,
@@ -13,7 +13,7 @@ export default function handler(
     case RequestMethod.GET:
       try {
         const userResponse: IUserData | MsgResponse = getUserById(id);
-        if (userResponse && typeof userResponse !== undefined) {
+        if(userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
         }
         break;
@@ -26,20 +26,14 @@ export default function handler(
         break;
       }
     default:
-      res.status(501).send({
-        msg: `Endpoint does not support ${requestMethod} request method.`,
-      });
+      res.status(501).send({ msg: 'What' });
       break;
   }
 }
 
 const getUserById = (id: string): IUserData | MsgResponse => {
   const allJsonFiles: IUserData[] = getUserData();
-  const requestedUser: IUserData | undefined = allJsonFiles.find(
-    (user: IUserData) => user.id === id
-  );
-  const result = requestedUser
-    ? requestedUser
-    : { msg: 'Requested user not found in "database".' };
+  const requestedUser: IUserData | undefined = allJsonFiles.find((user: IUserData) => user.id === id);
+  const result = requestedUser ? requestedUser : {msg: 'Requested user id not found in "database".'}
   return result;
-};
+}

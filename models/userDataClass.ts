@@ -1,4 +1,4 @@
-import { IUserData } from './';
+import { IUserData } from '.';
 
 export default class UserDataClass implements IUserData {
   id;
