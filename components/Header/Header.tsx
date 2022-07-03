@@ -1,7 +1,7 @@
 import { NextComponentType } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import Admin from '/public/images/admin.svg';
+import Admin from '../../public/images/admin.svg';
 
 export const Header: NextComponentType = () => {
   const router = useRouter();
