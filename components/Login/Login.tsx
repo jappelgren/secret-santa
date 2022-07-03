@@ -26,6 +26,10 @@ const Login = () => {
         `No one name ${inputValue} is participating in this gift exchange.  If you feel this is an error contact the administrator.`
       );
       setShowError(true);
+    } else {
+      setError(
+        `No users have been added to the gift exchange yet.  Check back later or contact the administrator.`
+      )
     }
   };
   return (
