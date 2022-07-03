@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IUserData } from '../../models';
 import Checked from '../../public/images/checked.svg';
 import Unchecked from '../../public/images/unchecked.svg';
-import UserDataClass from '../../models/UserDataClass';
+import UserDataClass from '@/models/UserDataClass';
 
 const UserTable: NextPage = () => {
   const [userData, setUserData] = useState<UserDataClass[]>([]);
