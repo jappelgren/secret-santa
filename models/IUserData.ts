@@ -6,5 +6,3 @@ export interface IUserData {
   idea2: string | null;
   idea3: string | null;
 }
-
-export default IUserData;
