@@ -72,6 +72,5 @@ const postUserData = (userData: IUserData): number => {
       )
     );
   }
-  console.log(userData);
   return Math.floor(Math.random() * 23);
 };
