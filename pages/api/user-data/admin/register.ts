@@ -5,7 +5,12 @@ import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const adminData: IAdminData = req.body;
+  let adminData: IAdminData = req.body;
+
+  if (typeof adminData === 'string') {
+    adminData = JSON.parse(adminData);
+  }
+
   const id = v4();
   const password = bcrypt.hashSync(adminData.password, 10);
 

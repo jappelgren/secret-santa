@@ -35,6 +35,6 @@ yarn-error.log*
 *.tsbuildinfo
 admin.json
 
-# local json
-*/adminData
-*/userData
+# local JSON foldersmodels/adminData
+models/userData
+models/adminData
