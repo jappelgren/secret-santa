@@ -4,7 +4,7 @@ import { IAdminData, MsgResponse } from '../../../../models';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<boolean | MsgResponse>
+  res: NextApiResponse<{ exists: boolean } | MsgResponse>
 ) {
   const userHex: any = fs.existsSync(`./models/adminData/admin.json`)
     ? fs.readFileSync(`./models/adminData/admin.json`)
@@ -12,9 +12,9 @@ export default function handler(
   const user: IAdminData = userHex ? JSON.parse(userHex) : '';
   try {
     if (user && user.id && user.password && user.userName) {
-      res.status(200).send(true);
+      res.status(200).send({ exists: true });
     } else {
-      res.status(200).send(false);
+      res.status(200).send({ exists: false });
     }
   } catch (error) {
     res.status(500).send({

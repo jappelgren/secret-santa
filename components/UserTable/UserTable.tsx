@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { IUserData } from '../../models';
@@ -33,13 +32,15 @@ class UserDataClass {
     return this.idea1 && this.idea2 && this.idea3;
   }
 }
+interface Props {
+  userData: IUserData[];
+}
 
-const UserTable: NextPage = () => {
+const UserTable: NextPage<Props> = (props) => {
   const [userData, setUserData] = useState<UserDataClass[]>([]);
 
-  const getUserData = async () => {
-    const res = await axios.get('/api/user-data');
-    const userData = res.data.map(
+  useEffect(() => {
+    const userData = props.userData.map(
       (user: IUserData) =>
         new UserDataClass(
           user.id,
@@ -51,10 +52,6 @@ const UserTable: NextPage = () => {
         )
     );
     setUserData(userData);
-  };
-
-  useEffect(() => {
-    getUserData();
   }, []);
 
   return (

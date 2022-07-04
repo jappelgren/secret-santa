@@ -1,9 +1,14 @@
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import UserTable from '../../components/UserTable/UserTable';
+import { IUserData } from '../../models';
 
-const AdminPanel: NextPage = () => {
+interface Props {
+  userData: IUserData[];
+}
+
+const AdminPanel: NextPage<Props> = (props) => {
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -19,10 +24,16 @@ const AdminPanel: NextPage = () => {
   return (
     <div>
       <h1 className="text-semibold text-2xl">Admin Options</h1>
-      <UserTable />
+      <UserTable userData={props.userData} />
       <button onClick={() => signOut()}>Log Out</button>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch(`${process.env.BASE_URL}/api/user-data`);
+  const userData = await res.json();
+  return { props: { userData } };
 };
 
 export default AdminPanel;

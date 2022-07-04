@@ -2,8 +2,9 @@ import { FormEvent, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import * as TypeChecks from '../../utils';
 import { useRouter } from 'next/router';
+import { NextComponentType } from 'next';
 
-const Login = () => {
+const Login: NextComponentType = () => {
   const router = useRouter();
 
   const [inputValue, setInputValue] = useState('');
