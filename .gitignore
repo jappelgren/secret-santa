@@ -33,3 +33,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+admin.json
+
+# local JSON foldersmodels/adminData
+models/userData
+models/adminData

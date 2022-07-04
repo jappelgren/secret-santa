@@ -6,3 +6,9 @@ export interface IUserData {
   idea2: string | null;
   idea3: string | null;
 }
+
+export interface IAdminData {
+  id: string;
+  userName: string;
+  password: string;
+}

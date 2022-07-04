@@ -2,8 +2,9 @@ import { FormEvent, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import * as TypeChecks from '../../utils';
 import { useRouter } from 'next/router';
+import { NextComponentType } from 'next';
 
-const Login = () => {
+const Login: NextComponentType = () => {
   const router = useRouter();
 
   const [inputValue, setInputValue] = useState('');
@@ -26,6 +27,10 @@ const Login = () => {
         `No one name ${inputValue} is participating in this gift exchange.  If you feel this is an error contact the administrator.`
       );
       setShowError(true);
+    } else {
+      setError(
+        `No users have been added to the gift exchange yet.  Check back later or contact the administrator.`
+      )
     }
   };
   return (

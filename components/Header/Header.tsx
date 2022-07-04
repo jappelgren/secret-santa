@@ -2,9 +2,11 @@ import { NextComponentType } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Admin from './Admin.svg';
+import { useSession } from 'next-auth/react';
 
 export const Header: NextComponentType = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   return (
     <header className="h-20 w-full flex flex-row justify-between p-4 items-center bg-green-600 overflow-hidden">
       <Image
@@ -14,7 +16,10 @@ export const Header: NextComponentType = () => {
         height="75px"
         onClick={() => router.push('/')}
       />
-      <Admin onClick={() => router.push('/admin-panel')} className="fill-white" />
+      <Admin
+        onClick={() => session ? router.push('/admin-panel') : router.push('/api/auth/signin')}
+        className="fill-white"
+      />
     </header>
   );
 };
