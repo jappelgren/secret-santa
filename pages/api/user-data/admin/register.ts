@@ -3,9 +3,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { IAdminData } from '../../../../models';
 import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import path from 'path';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   let adminData: IAdminData = req.body;
+
+  const direRelativeToPublicFolder = 'models/adminData';
+  const adminDataDir = path.resolve('./public', direRelativeToPublicFolder);
 
   if (typeof adminData === 'string') {
     adminData = JSON.parse(adminData);
@@ -20,11 +24,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     password,
   };
 
-  if (!fs.existsSync('./models/adminData')) {
-    fs.mkdirSync('./models/adminData');
+  if (!fs.existsSync(adminDataDir)) {
+    fs.mkdirSync(adminDataDir);
   }
   fs.writeFileSync(
-    './models/adminData/admin.json',
+    `${adminDataDir}admin.json`,
     JSON.stringify(preppedAdminData, null, 4)
   );
   res.status(201).send({ msg: 'Admin account created successfully.' });

@@ -1,13 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import { IAdminData, MsgResponse } from '../../../../models';
+import path from 'path';
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ exists: boolean } | MsgResponse>
 ) {
-  const userHex: any = fs.existsSync(`./models/adminData/admin.json`)
-    ? fs.readFileSync(`./models/adminData/admin.json`)
+  const direRelativeToPublicFolder = 'models/adminData';
+  const adminDataDir = path.resolve('./public', direRelativeToPublicFolder);
+
+  const userHex: any = fs.existsSync(`${adminDataDir}/admin.json`)
+    ? fs.readFileSync(`${adminDataDir}/admin.json`)
     : '';
   const user: IAdminData = userHex ? JSON.parse(userHex) : '';
   try {

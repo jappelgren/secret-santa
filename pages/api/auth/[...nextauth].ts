@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import fs from 'fs';
 import { IAdminData } from '../../../models';
 import bcrypt from 'bcrypt';
+import path from 'path';
 
 export default NextAuth({
   providers: [
@@ -13,7 +14,10 @@ export default NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const userHex: any = fs.readFileSync(`./models/adminData/admin.json`);
+        const direRelativeToPublicFolder = 'models/adminData';
+        const adminDataDir = path.resolve('./public', direRelativeToPublicFolder);
+
+        const userHex: any = fs.readFileSync(`${adminDataDir}/admin.json`);
         const user: IAdminData = JSON.parse(userHex);
         if (
           typeof credentials?.password === 'undefined' ||

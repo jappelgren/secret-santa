@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { IUserData, RequestMethod, MsgResponse } from '../../models';
 import * as fs from 'fs';
+import path from 'path';
 
 export default function handler(
   req: NextApiRequest,
@@ -45,12 +46,16 @@ export default function handler(
 }
 
 export const getUserData = (): IUserData[] => {
-  const allJsonFiles: string[] = fs.readdirSync('./models/userData');
+  const direRelativeToPublicFolder = 'models/userData';
+  const userDataDir = path.resolve('./public', direRelativeToPublicFolder);
+
+  const allJsonFiles: string[] = fs.readdirSync(userDataDir);
   if (allJsonFiles && allJsonFiles.length < 1) {
     return [];
   }
+  console.log(allJsonFiles);
   const jsonArr: IUserData[] = allJsonFiles.map((data) => {
-    const jsonHex: any = fs.readFileSync(`./models/userData/${data}`);
+    const jsonHex: any = fs.readFileSync(`${userDataDir}/${data}`);
     return JSON.parse(jsonHex);
   });
   return jsonArr;
