@@ -53,9 +53,7 @@ const AdminRegister: NextPage = () => {
   return (
     <>
       <p>
-        {' '}
-        Hey, you're the first person to visit this page which means you're the
-        admin, whether you like it or not. Register below to get started
+        Hey, you are the first person to visit this page which means you are the admin, whether you like it or not. Register below to get started
       </p>
       <form onSubmit={handleSubmit}>
         <label htmlFor="">Username</label>
