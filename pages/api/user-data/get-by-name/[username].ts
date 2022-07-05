@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { IUserData, MsgResponse, RequestMethod } from '../../../../models';
-import { getUserData } from '../../user-data';
+import Redis from 'ioredis';
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IUserData | MsgResponse>
 ) {
@@ -15,16 +15,16 @@ export default function handler(
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const userResponse: IUserData | MsgResponse = getUserById(userName);
+        const userResponse: IUserData | MsgResponse = await getUserById(
+          userName
+        );
         if (userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
         }
         break;
       } catch (error) {
         res.status(500).send({
-          msg: `An error occurred while reading user data. Error: ${JSON.stringify(
-            error
-          )}`,
+          msg: `An error occurred while reading user data. ${error}`,
         });
         break;
       }
@@ -36,12 +36,27 @@ export default function handler(
   }
 }
 
-const getUserById = (userName: string): IUserData | MsgResponse => {
-  const allJsonFiles: IUserData[] = getUserData();
-  const requestedUser: IUserData | undefined = allJsonFiles.find(
-    (user: IUserData) =>
-      user.name.toLocaleLowerCase() === userName.toLocaleLowerCase()
-  );
+const getUserById = async (name: string): Promise<IUserData | MsgResponse> => {
+  const redisUrl: string = process.env.REDIS_URL || '';
+  if (redisUrl === '')
+    throw new Error('REDIS_URL variable not set in environment.');
+
+  const redis = new Redis(redisUrl);
+
+  // Retrieves all hashes stored in Redis.
+  const allHashes = await redis.scan(0, 'TYPE', 'hash');
+  let requestedUser = {} as IUserData;
+
+  // I hate this loop.  It would be extremely inefficient if a ton of users were in the same gift exchange.
+  // Or at the very least eat up all of my free Redis requests.
+  for (const hash of allHashes[1]) {
+    const redisRes = (await redis.hgetall(hash)) as unknown as IUserData;
+    if (redisRes.name.toLocaleLowerCase() === name.toLocaleLowerCase()) {
+      requestedUser = redisRes;
+      break;
+    }
+  }
+
   const result = requestedUser
     ? requestedUser
     : { msg: 'Requested user not found in "database".' };

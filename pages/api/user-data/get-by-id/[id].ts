@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { IUserData, MsgResponse, RequestMethod } from '../../../../models';
-import { getUserData } from '../../user-data';
+import Redis from 'ioredis';
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IUserData | MsgResponse>
 ) {
@@ -12,16 +12,15 @@ export default function handler(
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const userResponse: IUserData | MsgResponse = getUserById(id);
+        const userResponse: IUserData | MsgResponse = await getUserById(id);
+        console.log(userResponse);
         if (userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
         }
         break;
       } catch (error) {
         res.status(500).send({
-          msg: `An error occurred while reading user data. Error: ${JSON.stringify(
-            error
-          )}`,
+          msg: `An error occurred while reading user data. Error: ${error}`,
         });
         break;
       }
@@ -33,11 +32,16 @@ export default function handler(
   }
 }
 
-const getUserById = (id: string): IUserData | MsgResponse => {
-  const allJsonFiles: IUserData[] = getUserData();
-  const requestedUser: IUserData | undefined = allJsonFiles.find(
-    (user: IUserData) => user.id === id
-  );
+const getUserById = async (id: string): Promise<IUserData | MsgResponse> => {
+  const redisUrl: string = process.env.REDIS_URL || '';
+  if (redisUrl === '')
+    throw new Error('REDIS_URL variable not set in environment.');
+  const redis = new Redis(redisUrl);
+
+  const requestedUser = (await redis.hgetall(
+    `id:${id}`
+  )) as unknown as IUserData;
+
   const result = requestedUser
     ? requestedUser
     : { msg: 'Requested user not found in "database".' };
