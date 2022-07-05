@@ -1,9 +1,8 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import fs from 'fs';
 import { IAdminData } from '../../../models';
 import bcrypt from 'bcrypt';
-import path from 'path';
+import Redis from 'ioredis';
 
 export default NextAuth({
   providers: [
@@ -14,29 +13,32 @@ export default NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const direRelativeToPublicFolder = 'models/adminData';
-        const adminDataDir = path.resolve('./public', direRelativeToPublicFolder);
-
-        const userHex: any = fs.readFileSync(`${adminDataDir}/admin.json`);
-        const user: IAdminData = JSON.parse(userHex);
         if (
           typeof credentials?.password === 'undefined' ||
           typeof credentials.username === 'undefined'
         )
           return null;
 
+        const redisUrl: string = process.env.REDIS_URL || '';
+        if (redisUrl === '')
+          throw new Error('REDIS_URL variable not set in environment.');
+
+        const redis = new Redis(redisUrl);
+        const redisRes = await redis.get('admin');
+        const admin: IAdminData =
+          redisRes && redisRes?.length > 0 ? JSON.parse(redisRes) : {};
+
         const passMatches = bcrypt.compareSync(
           credentials.password,
-          user.password
+          admin.password
         );
 
-        console.log(passMatches);
         if (
           credentials.username.toLocaleLowerCase() ===
-            user.userName.toLocaleLowerCase() &&
+            admin.userName.toLocaleLowerCase() &&
           passMatches
         ) {
-          return user;
+          return admin;
         }
 
         return null;
