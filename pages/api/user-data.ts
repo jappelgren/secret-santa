@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { IUserData, RequestMethod, MsgResponse } from '../../models';
-import * as fs from 'fs';
-import path from 'path';
+import Redis from 'ioredis';
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IUserData[] | MsgResponse>
 ) {
@@ -12,7 +11,7 @@ export default function handler(
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const getResult: IUserData[] = getUserData();
+        const getResult: IUserData[] = await getUserData();
         res.send(getResult);
         break;
       } catch (error) {
@@ -45,20 +44,25 @@ export default function handler(
   }
 }
 
-export const getUserData = (): IUserData[] => {
-  const direRelativeToPublicFolder = 'models/userData';
-  const userDataDir = path.resolve('./public', direRelativeToPublicFolder);
+const getUserData = async (): Promise<IUserData[]> => {
+  const redisUrl: string = process.env.REDIS_URL || '';
+  if (redisUrl === '')
+    throw new Error('REDIS_URL variable not set in environment.');
 
-  const allJsonFiles: string[] = fs.readdirSync(userDataDir);
-  if (allJsonFiles && allJsonFiles.length < 1) {
-    return [];
+  const redis = new Redis(redisUrl);
+
+  // Retrieves all hashes stored in Redis.
+  const allHashes = await redis.scan(0, 'TYPE', 'hash');
+  let allUsers = [] as IUserData[];
+
+  if (allHashes.length > 0) {
+    for (const hash of allHashes[1]) {
+      const redisRes = (await redis.hgetall(hash)) as unknown as IUserData;
+      allUsers.push(redisRes);
+    }
   }
-  console.log(allJsonFiles);
-  const jsonArr: IUserData[] = allJsonFiles.map((data) => {
-    const jsonHex: any = fs.readFileSync(`${userDataDir}/${data}`);
-    return JSON.parse(jsonHex);
-  });
-  return jsonArr;
+
+  return allUsers;
 };
 
 const postUserData = (userData: IUserData): number => {
