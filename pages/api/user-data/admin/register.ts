@@ -1,15 +1,14 @@
-import fs from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { IAdminData } from '../../../../models';
 import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import path from 'path';
+import Redis from 'ioredis';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   let adminData: IAdminData = req.body;
 
-  const direRelativeToPublicFolder = 'models/adminData';
-  const adminDataDir = path.resolve('./public', direRelativeToPublicFolder);
+  const redisUrl: string = process.env.REDIS_URL || '';
+  const redis = new Redis(redisUrl);
 
   if (typeof adminData === 'string') {
     adminData = JSON.parse(adminData);
@@ -24,12 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     password,
   };
 
-  if (!fs.existsSync(adminDataDir)) {
-    fs.mkdirSync(adminDataDir);
-  }
-  fs.writeFileSync(
-    `${adminDataDir}admin.json`,
-    JSON.stringify(preppedAdminData, null, 4)
-  );
+  redis.set('admin', JSON.stringify(preppedAdminData, null, 4));
+
   res.status(201).send({ msg: 'Admin account created successfully.' });
 }
