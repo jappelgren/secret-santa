@@ -13,7 +13,7 @@ export default async function handler(
     case RequestMethod.GET:
       try {
         const userResponse: IUserData | MsgResponse = await getUserById(id);
-        console.log(userResponse);
+
         if (userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
         }

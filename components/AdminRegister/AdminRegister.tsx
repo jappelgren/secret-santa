@@ -7,6 +7,7 @@ const AdminRegister: NextPage = () => {
     userName: '',
     password: '',
   };
+
   const router = useRouter();
 
   const [adminForm, setAdminForm] = useState(initialState);
@@ -53,36 +54,44 @@ const AdminRegister: NextPage = () => {
   return (
     <>
       <p>
-        Hey, you are the first person to visit this page which means you are the admin, whether you like it or not. Register below to get started
+        Hey, you are the first person to visit this page which means you are the
+        admin, whether you like it or not. Register below to get started
       </p>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="">Username</label>
-        <input
-          type="text"
-          value={adminForm.userName}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleFormChange(e, 'userName')
-          }
-          required
-        />
-        <label htmlFor="">Password</label>
-        <input
-          type="password"
-          value={adminForm.password}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleFormChange(e, 'password')
-          }
-          required
-        />
-        <label htmlFor="">Confirm Password</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setConfirmPassword(e.target.value)
-          }
-          required
-        />
+        <label htmlFor="">
+          Username
+          <input
+            type="text"
+            value={adminForm.userName}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleFormChange(e, 'userName')
+            }
+            required
+          />
+        </label>
+
+        <label htmlFor="">
+          Password
+          <input
+            type="password"
+            value={adminForm.password}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleFormChange(e, 'password')
+            }
+            required
+          />
+        </label>
+        <label htmlFor="">
+          Confirm Password
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setConfirmPassword(e.target.value)
+            }
+            required
+          />
+        </label>
         <button type="submit" disabled={disabledSubmit}>
           Submit
         </button>

@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import * as TypeChecks from '../../utils';
 import { useRouter } from 'next/router';
 import { NextComponentType } from 'next';
+import { IUserData } from '../../models';
 
 const Login: NextComponentType = () => {
   const router = useRouter();
@@ -14,9 +14,8 @@ const Login: NextComponentType = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res: AxiosResponse = await axios.get(
-      `/api/user-data/get-by-name/${inputValue}`
-    );
+    const res: any = await fetch(`/api/user-data/get-by-name/${inputValue}`);
+    console.log(res);
 
     if (res && TypeChecks.isUserData(res.data)) {
       setInputValue('');
@@ -30,7 +29,7 @@ const Login: NextComponentType = () => {
     } else {
       setError(
         `No users have been added to the gift exchange yet.  Check back later or contact the administrator.`
-      )
+      );
     }
   };
   return (
@@ -40,13 +39,15 @@ const Login: NextComponentType = () => {
         onSubmit={(e: FormEvent<HTMLFormElement>) => handleSubmit(e)}
       >
         <p>Login to enter or edit your list.</p>
-        <label htmlFor="">First Name</label>
-        <input
-          type="text"
-          className="ring"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
+        <label htmlFor="">
+          First Name
+          <input
+            type="text"
+            className="ring"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+        </label>
         <button type="submit">Login</button>
       </form>
       {showError && (

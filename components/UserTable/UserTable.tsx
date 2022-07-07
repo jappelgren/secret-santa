@@ -15,10 +15,10 @@ class UserDataClass {
   constructor(
     id: string,
     name: string,
-    email: string | null,
-    idea1: string | null,
-    idea2: string | null,
-    idea3: string | null
+    email: string | undefined,
+    idea1: string | undefined,
+    idea2: string | undefined,
+    idea3: string | undefined
   ) {
     this.id = id;
     this.name = name;
