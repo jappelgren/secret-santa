@@ -1,15 +1,15 @@
 import { NextPage } from 'next';
 import { GetServerSideProps } from 'next';
-import { IUserData } from '../../models';
+import { UserDataType } from '../../models';
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 interface Props {
-  data: IUserData;
+  data: UserDataType;
 }
 
 const EditList: NextPage<Props> = (props: Props) => {
   const { data } = props;
-  const [userData, setUserData] = useState<IUserData>(data);
+  const [userData, setUserData] = useState<UserDataType>(data);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ const EditList: NextPage<Props> = (props: Props) => {
     }
   };
 
-  const validateForm = (formData: IUserData) => {
+  const validateForm = (formData: UserDataType) => {
     if (
       formData.email &&
       formData.email.length > 3 &&

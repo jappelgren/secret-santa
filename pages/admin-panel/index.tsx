@@ -2,10 +2,10 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import UserTable from '../../components/UserTable/UserTable';
-import { IUserData } from '../../models';
+import { UserDataType } from '../../models';
 
 interface Props {
-  userData: IUserData[];
+  userData: UserDataType[];
 }
 
 const AdminPanel: NextPage<Props> = (props) => {

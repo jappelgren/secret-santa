@@ -1,10 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, IMsgResponse, RequestMethod, UserData } from '../../../../models';
+import {
+  UserDataType,
+  MsgResponseType,
+  RequestMethod,
+  UserData,
+} from '../../../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IUserData | IMsgResponse>
+  res: NextApiResponse<UserDataType | MsgResponseType>
 ) {
   const requestMethod = req.method;
   const userName =
@@ -15,9 +20,8 @@ export default async function handler(
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const userResponse: IUserData | IMsgResponse = await getUserByName(
-          userName
-        );
+        const userResponse: UserDataType | MsgResponseType =
+          await getUserByName(userName);
         if (userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
         }
@@ -38,7 +42,7 @@ export default async function handler(
 
 const getUserByName = async (
   name: string
-): Promise<IUserData | IMsgResponse> => {
+): Promise<UserDataType | MsgResponseType> => {
   const redisUrl: string = process.env.REDIS_URL || '';
   if (redisUrl === '')
     throw new Error('REDIS_URL variable not set in environment.');
@@ -47,12 +51,12 @@ const getUserByName = async (
 
   // Retrieves all hashes stored in Redis.
   const allHashes = await redis.scan(0, 'TYPE', 'hash');
-  let requestedUser = {} as IUserData;
+  let requestedUser = {} as UserDataType;
 
   // I hate this loop.  It would be extremely inefficient if a ton of users were in the same gift exchange.
   // Or at the very least eat up all of my free Redis requests.
   for (const hash of allHashes[1]) {
-    const redisRes = (await redis.hgetall(hash)) as unknown as IUserData;
+    const redisRes = (await redis.hgetall(hash)) as unknown as UserDataType;
     if (redisRes.name.toLocaleLowerCase() === name.toLocaleLowerCase()) {
       requestedUser = redisRes;
       break;
@@ -62,6 +66,6 @@ const getUserByName = async (
   const result = UserData.safeParse(requestedUser).success
     ? requestedUser
     : { msg: 'Requested user not found in "database".' };
-    
+
   return result;
 };

@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, RequestMethod, IMsgResponse } from '../../models';
+import { UserDataType, RequestMethod, MsgResponseType } from '../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IUserData[] | IMsgResponse>
+  res: NextApiResponse<UserDataType[] | MsgResponseType>
 ) {
   const requestMethod = req.method;
 
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const getResult: IUserData[] = await getUserData();
+        const getResult: UserDataType[] = await getUserData();
         res.send(getResult);
         break;
       } catch (error) {
@@ -24,7 +24,7 @@ export default async function handler(
       }
     case RequestMethod.PUT:
       try {
-        const body: IUserData = req.body;
+        const body: UserDataType = req.body;
         const recordedData = await editUserData(body);
         res.status(201).send({
           msg: `User data successfully recorded. userData: ${JSON.stringify(
@@ -46,7 +46,7 @@ export default async function handler(
   }
 }
 
-const getUserData = async (): Promise<IUserData[]> => {
+const getUserData = async (): Promise<UserDataType[]> => {
   const redisUrl: string = process.env.REDIS_URL || '';
   if (redisUrl === '')
     throw new Error('REDIS_URL variable not set in environment.');
@@ -55,11 +55,11 @@ const getUserData = async (): Promise<IUserData[]> => {
 
   // Retrieves all hashes stored in Redis.
   const allHashes = await redis.scan(0, 'TYPE', 'hash');
-  let allUsers = [] as IUserData[];
+  let allUsers = [] as UserDataType[];
 
   if (allHashes.length > 0) {
     for (const hash of allHashes[1]) {
-      const redisRes = (await redis.hgetall(hash)) as unknown as IUserData;
+      const redisRes = (await redis.hgetall(hash)) as unknown as UserDataType;
       allUsers.push(redisRes);
     }
   }
@@ -67,7 +67,7 @@ const getUserData = async (): Promise<IUserData[]> => {
   return allUsers;
 };
 
-const editUserData = async (userData: IUserData) => {
+const editUserData = async (userData: UserDataType) => {
   try {
     const { id, name, email, idea1, idea2, idea3 } = userData;
     if (!name || !email || !idea1 || !idea2 || !idea3) {
@@ -83,7 +83,7 @@ const editUserData = async (userData: IUserData) => {
     const redisUrl: string = process.env.REDIS_URL || '';
     if (redisUrl === '')
       throw new Error('REDIS_URL variable not set in environment.');
-  
+
     const redis = new Redis(redisUrl);
     const result = await redis.hmset(`id:${id}`, userData);
 

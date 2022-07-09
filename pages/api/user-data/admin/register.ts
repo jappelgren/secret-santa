@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { IAdminData } from '../../../../models';
+import { AdminDataType } from '../../../../models';
 import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
 import Redis from 'ioredis';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    let adminData: IAdminData = req.body;
+    let adminData: AdminDataType = req.body;
 
     const redisUrl: string = process.env.REDIS_URL || '';
     if (redisUrl === '')

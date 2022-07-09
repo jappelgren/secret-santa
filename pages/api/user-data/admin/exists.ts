@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { IAdminData, IMsgResponse } from '../../../../models';
+import { AdminDataType, MsgResponseType } from '../../../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ exists: boolean } | IMsgResponse>
+  res: NextApiResponse<{ exists: boolean } | MsgResponseType>
 ) {
   try {
     const redisUrl: string = process.env.REDIS_URL || '';
@@ -13,7 +13,7 @@ export default async function handler(
 
     const redis = new Redis(redisUrl);
     const redisRes = await redis.get('admin');
-    const admin: IAdminData =
+    const admin: AdminDataType =
       redisRes && redisRes?.length > 0 ? JSON.parse(redisRes) : {};
 
     if (admin && admin!.id && admin!.password && admin!.userName) {

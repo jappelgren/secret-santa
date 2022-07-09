@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { IUserData } from '../../models';
+import { UserDataType } from '../../models';
 import Checked from '/public/images/checked.svg';
 import Unchecked from '/public/images/unchecked.svg';
 
@@ -33,7 +33,7 @@ class UserDataClass {
   }
 }
 interface Props {
-  userData: IUserData[];
+  userData: UserDataType[];
 }
 
 const UserTable: NextPage<Props> = (props) => {
@@ -41,7 +41,7 @@ const UserTable: NextPage<Props> = (props) => {
 
   useEffect(() => {
     const userData = props.userData.map(
-      (user: IUserData) =>
+      (user: UserDataType) =>
         new UserDataClass(
           user.id,
           user.name,
