@@ -1,7 +1,7 @@
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/router';
 import { NextComponentType } from 'next';
-import { UserData, MsgResponse } from '../../models';
+import { useRouter } from 'next/router';
+import { FormEvent, useState } from 'react';
+import { MsgResponse, UserData } from '../../models';
 
 const Login: NextComponentType = () => {
   const router = useRouter();
@@ -15,8 +15,6 @@ const Login: NextComponentType = () => {
 
     const res = await fetch(`/api/user-data/get-by-name/${inputValue}`);
     const user = await res.json();
-
-    console.log(MsgResponse.safeParse(user));
 
     if (res && UserData.safeParse(user).success) {
       setInputValue('');

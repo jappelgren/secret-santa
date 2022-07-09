@@ -52,7 +52,7 @@ const UserTable: NextPage<Props> = (props) => {
         )
     );
     setUserData(userData);
-  }, []);
+  }, [props]);
 
   return (
     <section className="flex justify-center items-center flex-col">
@@ -98,15 +98,6 @@ const UserTable: NextPage<Props> = (props) => {
                   </td>
                 </tr>
               ))}
-              <tr>
-                <td className="border border-slate-700">Add User</td>
-                <td className="border border-slate-700">
-                  <div className="flex w-full justify-center">
-                    <button>Add User</button>
-                  </div>
-                </td>
-                <td className="border border-slate-700"></td>
-              </tr>
             </tbody>
           </table>
         </div>

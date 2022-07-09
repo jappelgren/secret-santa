@@ -62,7 +62,7 @@ const getUserByName = async (
       break;
     }
   }
-
+  console.log(requestedUser);
   const result = UserData.safeParse(requestedUser).success
     ? requestedUser
     : { msg: 'Requested user not found in "database".' };

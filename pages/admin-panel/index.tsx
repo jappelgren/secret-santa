@@ -2,13 +2,25 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import UserTable from '../../components/UserTable/UserTable';
+import AddUserForm from '../../components/AddUserForm/AddUserForm';
 import { UserDataType } from '../../models';
+import { useEffect, useState } from 'react';
 
-interface Props {
-  userData: UserDataType[];
-}
+const AdminPanel: NextPage = () => {
+  const [rerender, setRerender] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserDataType[]>([]);
 
-const AdminPanel: NextPage<Props> = (props) => {
+  const getAllUsers = async () => {
+    try {
+      const res = await fetch(`/api/user-data`);
+      const userDataJson: UserDataType[] = await res.json();
+      console.log(userDataJson);
+      setUserData(userDataJson);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -21,19 +33,22 @@ const AdminPanel: NextPage<Props> = (props) => {
     return <>Loading</>;
   }
 
+  useEffect(() => {
+    getAllUsers();
+  }, [rerender]);
+  console.log(rerender)
   return (
     <div>
       <h1 className="text-semibold text-2xl">Admin Options</h1>
-      <UserTable userData={props.userData} />
+      <AddUserForm
+        allUsers={userData}
+        rerenderParent={setRerender}
+        rerenderState={rerender}
+      />
+      <UserTable userData={userData} />
       <button onClick={() => signOut()}>Log Out</button>
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch(`${process.env.BASE_URL}/api/user-data`);
-  const userData = await res.json();
-  return { props: { userData } };
 };
 
 export default AdminPanel;

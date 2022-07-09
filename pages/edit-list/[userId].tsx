@@ -13,6 +13,7 @@ const EditList: NextPage<Props> = (props: Props) => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    console.log(userData);
     if (validateForm(userData)) {
       fetch('/api/user-data', {
         method: 'PUT',

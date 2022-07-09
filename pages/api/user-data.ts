@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { UserDataType, RequestMethod, MsgResponseType } from '../../models';
 import Redis from 'ioredis';
+import { v4 } from 'uuid';
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,7 +27,7 @@ export default async function handler(
       try {
         const body: UserDataType = req.body;
         const recordedData = await editUserData(body);
-        res.status(201).send({
+        res.status(200).send({
           msg: `User data successfully recorded. userData: ${JSON.stringify(
             recordedData
           )}`,
@@ -37,6 +38,19 @@ export default async function handler(
           msg: `An error occurred while writing user data. ${error}`,
         });
         break;
+      }
+    case RequestMethod.POST:
+      try {
+        const body: UserDataType = req.body;
+        const recordedData = await addUserData(body);
+        res.status(201).send({
+          msg: `User: ${body.name} successfully added to gift exchange.`,
+        });
+        break;
+      } catch (error) {
+        res.status(500).send({
+          msg: `An error occurred while creating new user. ${error}`,
+        });
       }
     default:
       res.status(501).send({
@@ -98,7 +112,30 @@ const editUserData = async (userData: UserDataType) => {
   }
 };
 
-const createUser = () => {
+const addUserData = async (userData: UserDataType) => {
   try {
-  } catch (error) {}
+    const { name } = userData;
+    const id = v4();
+
+    const newUser = {
+      name,
+      id,
+    };
+
+    const redisUrl: string = process.env.REDIS_URL || '';
+    if (redisUrl === '')
+      throw new Error('REDIS_URL variable not set in environment.');
+
+    const redis = new Redis(redisUrl);
+    const result = await redis.hmset(`id:${id}`, newUser);
+    
+    if (result === 'OK') {
+      return userData;
+    }
+    return { msg: `An error occurred while updating user data in database.` };
+  } catch (error) {
+    return {
+      msg: `An error occurred while updating user data in database. ${error}`,
+    };
+  }
 };
