@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { IAdminData } from '../../../models';
+import { AdminDataType } from '../../../models';
 import bcrypt from 'bcrypt';
 import Redis from 'ioredis';
 
@@ -25,7 +25,7 @@ export default NextAuth({
 
         const redis = new Redis(redisUrl);
         const redisRes = await redis.get('admin');
-        const admin: IAdminData =
+        const admin: AdminDataType =
           redisRes && redisRes?.length > 0 ? JSON.parse(redisRes) : {};
 
         const passMatches = bcrypt.compareSync(

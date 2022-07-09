@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { IUserData } from '../../models';
+import { UserDataType } from '../../models';
 import Checked from '/public/images/checked.svg';
 import Unchecked from '/public/images/unchecked.svg';
 
@@ -15,10 +15,10 @@ class UserDataClass {
   constructor(
     id: string,
     name: string,
-    email: string | null,
-    idea1: string | null,
-    idea2: string | null,
-    idea3: string | null
+    email: string | undefined,
+    idea1: string | undefined,
+    idea2: string | undefined,
+    idea3: string | undefined
   ) {
     this.id = id;
     this.name = name;
@@ -33,7 +33,7 @@ class UserDataClass {
   }
 }
 interface Props {
-  userData: IUserData[];
+  userData: UserDataType[];
 }
 
 const UserTable: NextPage<Props> = (props) => {
@@ -41,7 +41,7 @@ const UserTable: NextPage<Props> = (props) => {
 
   useEffect(() => {
     const userData = props.userData.map(
-      (user: IUserData) =>
+      (user: UserDataType) =>
         new UserDataClass(
           user.id,
           user.name,
@@ -52,7 +52,7 @@ const UserTable: NextPage<Props> = (props) => {
         )
     );
     setUserData(userData);
-  }, []);
+  }, [props]);
 
   return (
     <section className="flex justify-center items-center flex-col">
@@ -98,15 +98,6 @@ const UserTable: NextPage<Props> = (props) => {
                   </td>
                 </tr>
               ))}
-              <tr>
-                <td className="border border-slate-700">Add User</td>
-                <td className="border border-slate-700">
-                  <div className="flex w-full justify-center">
-                    <button>Add User</button>
-                  </div>
-                </td>
-                <td className="border border-slate-700"></td>
-              </tr>
             </tbody>
           </table>
         </div>
