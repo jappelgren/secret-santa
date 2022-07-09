@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, RequestMethod, MsgResponse } from '../../models';
+import { IUserData, RequestMethod, IMsgResponse } from '../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IUserData[] | MsgResponse>
+  res: NextApiResponse<IUserData[] | IMsgResponse>
 ) {
   const requestMethod = req.method;
 

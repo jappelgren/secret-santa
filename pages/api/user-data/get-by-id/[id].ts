@@ -1,10 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IUserData, MsgResponse, RequestMethod } from '../../../../models';
+import {
+  IUserData,
+  IMsgResponse,
+  RequestMethod,
+  UserData,
+} from '../../../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IUserData | MsgResponse>
+  res: NextApiResponse<IUserData | IMsgResponse>
 ) {
   const requestMethod = req.method;
   const id = typeof req.query.id === 'string' ? req.query.id : req.query.id[0];
@@ -12,7 +17,7 @@ export default async function handler(
   switch (requestMethod) {
     case RequestMethod.GET:
       try {
-        const userResponse: IUserData | MsgResponse = await getUserById(id);
+        const userResponse: IUserData | IMsgResponse = await getUserById(id);
 
         if (userResponse && typeof userResponse !== undefined) {
           res.send(userResponse);
@@ -32,7 +37,7 @@ export default async function handler(
   }
 }
 
-const getUserById = async (id: string): Promise<IUserData | MsgResponse> => {
+const getUserById = async (id: string): Promise<IUserData | IMsgResponse> => {
   const redisUrl: string = process.env.REDIS_URL || '';
   if (redisUrl === '')
     throw new Error('REDIS_URL variable not set in environment.');
@@ -42,7 +47,7 @@ const getUserById = async (id: string): Promise<IUserData | MsgResponse> => {
     `id:${id}`
   )) as unknown as IUserData;
 
-  const result = requestedUser
+  const result = UserData.safeParse(requestedUser).success
     ? requestedUser
     : { msg: 'Requested user not found in "database".' };
   return result;

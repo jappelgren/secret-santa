@@ -1,8 +1,7 @@
 import { FormEvent, useState } from 'react';
-import * as TypeChecks from '../../utils';
 import { useRouter } from 'next/router';
 import { NextComponentType } from 'next';
-import { IUserData } from '../../models';
+import { UserData, MsgResponse } from '../../models';
 
 const Login: NextComponentType = () => {
   const router = useRouter();
@@ -14,14 +13,16 @@ const Login: NextComponentType = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res: any = await fetch(`/api/user-data/get-by-name/${inputValue}`);
-    console.log(res);
+    const res = await fetch(`/api/user-data/get-by-name/${inputValue}`);
+    const user = await res.json();
 
-    if (res && TypeChecks.isUserData(res.data)) {
+    console.log(MsgResponse.safeParse(user));
+
+    if (res && UserData.safeParse(user).success) {
       setInputValue('');
       setShowError(false);
-      router.push(`/edit-list/${res.data.id}`);
-    } else if (res && TypeChecks.isMsgResponse(res.data)) {
+      router.push(`/edit-list/${user.id}`);
+    } else if (res && MsgResponse.safeParse(user).success) {
       setError(
         `No one name ${inputValue} is participating in this gift exchange.  If you feel this is an error contact the administrator.`
       );
@@ -30,6 +31,7 @@ const Login: NextComponentType = () => {
       setError(
         `No users have been added to the gift exchange yet.  Check back later or contact the administrator.`
       );
+      setShowError(true);
     }
   };
   return (

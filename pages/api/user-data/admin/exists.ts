@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { IAdminData, MsgResponse } from '../../../../models';
+import { IAdminData, IMsgResponse } from '../../../../models';
 import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ exists: boolean } | MsgResponse>
+  res: NextApiResponse<{ exists: boolean } | IMsgResponse>
 ) {
   try {
     const redisUrl: string = process.env.REDIS_URL || '';
