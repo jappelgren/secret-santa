@@ -29,14 +29,14 @@ const AdminPanel: NextPage = () => {
   });
   const router = useRouter();
 
-  if (status === 'loading') {
-    return <>Loading</>;
-  }
-
   useEffect(() => {
     getAllUsers();
   }, [rerender]);
-  console.log(rerender)
+
+  if (status === 'loading') {
+    return <>Loading</>;
+  }
+  console.log(rerender);
   return (
     <div>
       <h1 className="text-semibold text-2xl">Admin Options</h1>
