@@ -14,10 +14,9 @@ const AdminPanel: NextPage = () => {
     try {
       const res = await fetch(`/api/user-data`);
       const userDataJson: UserDataType[] = await res.json();
-      console.log(userDataJson);
       setUserData(userDataJson);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -36,7 +35,6 @@ const AdminPanel: NextPage = () => {
   if (status === 'loading') {
     return <>Loading</>;
   }
-  console.log(rerender);
   return (
     <div>
       <h1 className="text-semibold text-2xl">Admin Options</h1>
@@ -45,7 +43,11 @@ const AdminPanel: NextPage = () => {
         rerenderParent={setRerender}
         rerenderState={rerender}
       />
-      <UserTable userData={userData} />
+      <UserTable
+        userData={userData}
+        rerenderParent={setRerender}
+        rerenderState={rerender}
+      />
       <button onClick={() => signOut()}>Log Out</button>
     </div>
   );

@@ -1,7 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { UserDataType, RequestMethod, MsgResponseType } from '../../models';
+import {
+  UserDataType,
+  RequestMethod,
+  MsgResponseType,
+  UserData,
+} from '../../models';
 import Redis from 'ioredis';
 import { v4 } from 'uuid';
+import { getToken } from 'next-auth/jwt';
+import { authorized } from '../../utils';
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,11 +33,18 @@ export default async function handler(
     case RequestMethod.PUT:
       try {
         const body: UserDataType = req.body;
-        const recordedData = await editUserData(body);
-        res.status(200).send({
-          msg: `User data successfully recorded. userData: ${JSON.stringify(
-            recordedData
-          )}`,
+        const recordedData: UserDataType | MsgResponseType = await editUserData(
+          body
+        );
+        if (recordedData && UserData.safeParse(recordedData).success) {
+          res.status(200).send({
+            msg: `List updated successfully.`,
+          });
+          break;
+        }
+        console.error(recordedData);
+        res.status(500).send({
+          msg: 'An error occurred while updating list.  Please try again.',
         });
         break;
       } catch (error) {
@@ -40,6 +54,9 @@ export default async function handler(
         break;
       }
     case RequestMethod.POST:
+      const isAuthorized = await authorized(req, res);
+      if (!isAuthorized) return;
+      
       try {
         const body: UserDataType = req.body;
         const recordedData = await addUserData(body);
@@ -128,7 +145,7 @@ const addUserData = async (userData: UserDataType) => {
 
     const redis = new Redis(redisUrl);
     const result = await redis.hmset(`id:${id}`, newUser);
-    
+
     if (result === 'OK') {
       return userData;
     }

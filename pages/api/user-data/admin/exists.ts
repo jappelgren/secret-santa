@@ -1,6 +1,6 @@
+import Redis from 'ioredis';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { AdminDataType, MsgResponseType } from '../../../../models';
-import Redis from 'ioredis';
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +16,7 @@ export default async function handler(
     const admin: AdminDataType =
       redisRes && redisRes?.length > 0 ? JSON.parse(redisRes) : {};
 
-    if (admin && admin!.id && admin!.password && admin!.userName) {
+    if (admin && admin.id && admin.password && admin.userName) {
       res.status(200).send({ exists: true });
     } else {
       res.status(200).send({ exists: false });

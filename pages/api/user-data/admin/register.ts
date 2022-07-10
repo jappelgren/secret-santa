@@ -1,10 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { AdminDataType } from '../../../../models';
-import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
 import Redis from 'ioredis';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { v4 } from 'uuid';
+import { AdminDataType } from '../../../../models';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     let adminData: AdminDataType = req.body;
 
@@ -13,6 +16,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       throw new Error('REDIS_URL variable not set in environment.');
 
     const redis = new Redis(redisUrl);
+
+    // Check if an admin already exists, if so we will not create another.
+    const redisRes = await redis.get('admin');
+    const admin: AdminDataType =
+      redisRes && redisRes?.length > 0 ? JSON.parse(redisRes) : {};
+
+    if (admin && admin.id && admin.password && admin.userName) {
+      res
+        .status(500)
+        .send({
+          msg: 'One admin already exists. There cannot be more than one admin at a time.',
+        });
+      return;
+    }
 
     if (typeof adminData === 'string') {
       adminData = JSON.parse(adminData);
