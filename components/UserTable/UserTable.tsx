@@ -34,10 +34,26 @@ class UserDataClass {
 }
 interface Props {
   userData: UserDataType[];
+  rerenderParent: Function;
+  rerenderState: boolean;
 }
 
 const UserTable: NextPage<Props> = (props) => {
   const [userData, setUserData] = useState<UserDataClass[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const deleteUser = async (id: string) => {
+    setErrorMessage('');
+    const res: Response = await fetch(`/api/user-data/delete-by-id/${id}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      props.rerenderParent(!props.rerenderState);
+      return;
+    }
+    const resMsg = await res.json();
+    setErrorMessage(resMsg);
+  };
 
   useEffect(() => {
     const userData = props.userData.map(
@@ -77,7 +93,7 @@ const UserTable: NextPage<Props> = (props) => {
                   key={user.name}
                   className={`${i % 2 === 0 ? 'bg-red-50' : ''}`}
                 >
-                  <td className="border border-slate-700 text-center">
+                  <td className="border border-slate-700 text-center capitalize">
                     {user.name}
                   </td>
                   <td className="border border-slate-700">
@@ -93,13 +109,16 @@ const UserTable: NextPage<Props> = (props) => {
                   </td>
                   <td className="border border-slate-700">
                     <div className="flex w-full justify-center">
-                      <button>Delete</button>
+                      <button onClick={() => deleteUser(user.id)}>
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <p>{errorMessage && errorMessage}</p>
         </div>
       ) : (
         <p>No Users Added Yet</p>

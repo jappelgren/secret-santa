@@ -1,7 +1,12 @@
 import { NextPage } from 'next';
 import { GetServerSideProps } from 'next';
-import { UserDataType } from '../../models';
+import {
+  MsgResponseType,
+  UserDataAllRequired,
+  UserDataType,
+} from '../../models';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { z } from 'zod';
 
 interface Props {
   data: UserDataType;
@@ -10,35 +15,39 @@ interface Props {
 const EditList: NextPage<Props> = (props: Props) => {
   const { data } = props;
   const [userData, setUserData] = useState<UserDataType>(data);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(userData);
-    if (validateForm(userData)) {
-      fetch('/api/user-data', {
-        method: 'PUT',
-        body: JSON.stringify(userData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    }
-  };
 
-  const validateForm = (formData: UserDataType) => {
-    if (
-      formData.email &&
-      formData.email.length > 3 &&
-      formData.idea1 &&
-      formData.idea1.length > 0 &&
-      formData.idea2 &&
-      formData.idea1.length > 0 &&
-      formData.idea3 &&
-      formData.idea1.length > 0
-    ) {
-      return true;
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    const validation = UserDataAllRequired.safeParse(userData);
+
+    try {
+      if (validation.success) {
+        const res: Response = await fetch('/api/user-data', {
+          method: 'PUT',
+          body: JSON.stringify(userData),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const responseMsg: MsgResponseType = await res.json();
+        if (res.ok) {
+          setSuccessMessage(responseMsg.msg);
+          return;
+        }
+        setErrorMessage(responseMsg.msg);
+      }
+      setErrorMessage(
+        'All fields must be filled out with.  Email must be an actual real email.'
+      );
+    } catch (error: any) {
+      setErrorMessage(error);
     }
-    return false;
   };
 
   return (
@@ -46,7 +55,13 @@ const EditList: NextPage<Props> = (props: Props) => {
       <form onSubmit={handleSubmit}>
         <label htmlFor="user-name">
           First Name
-          <input required type="text" value={props.data.name} disabled />
+          <input
+            className="capitalize"
+            required
+            type="text"
+            value={props.data.name}
+            disabled
+          />
         </label>
         <label htmlFor="user-name">
           Email
@@ -94,6 +109,7 @@ const EditList: NextPage<Props> = (props: Props) => {
         </label>
         <button type="submit">Submit</button>
       </form>
+      <p>{errorMessage ? errorMessage : successMessage}</p>
     </>
   );
 };
