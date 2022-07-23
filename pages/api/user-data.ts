@@ -1,14 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import {
-  UserDataType,
-  RequestMethod,
-  MsgResponseType,
-  UserData,
-} from '../../models';
 import Redis from 'ioredis';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { v4 } from 'uuid';
-import { getToken } from 'next-auth/jwt';
-import { authorized } from '../../utils';
+import {
+  MsgResponseType, RequestMethod, UserData, UserDataType
+} from '../../models';
+import { authorized, getUserData } from '../../utils';
 
 export default async function handler(
   req: NextApiRequest,
@@ -76,27 +72,6 @@ export default async function handler(
       break;
   }
 }
-
-const getUserData = async (): Promise<UserDataType[]> => {
-  const redisUrl: string = process.env.REDIS_URL || '';
-  if (redisUrl === '')
-    throw new Error('REDIS_URL variable not set in environment.');
-
-  const redis = new Redis(redisUrl);
-
-  // Retrieves all hashes stored in Redis.
-  const allHashes = await redis.scan(0, 'TYPE', 'hash');
-  let allUsers = [] as UserDataType[];
-
-  if (allHashes.length > 0) {
-    for (const hash of allHashes[1]) {
-      const redisRes = (await redis.hgetall(hash)) as unknown as UserDataType;
-      allUsers.push(redisRes);
-    }
-  }
-
-  return allUsers;
-};
 
 const editUserData = async (userData: UserDataType) => {
   try {

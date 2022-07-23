@@ -6,7 +6,6 @@ import {
   UserDataType,
 } from '../../models';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { z } from 'zod';
 
 interface Props {
   data: UserDataType;

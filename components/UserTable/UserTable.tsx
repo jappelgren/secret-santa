@@ -1,37 +1,8 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { UserDataType } from '../../models';
+import { UserDataType, UserDataClass } from '../../models';
 import Checked from '/public/images/checked.svg';
 import Unchecked from '/public/images/unchecked.svg';
-
-class UserDataClass {
-  id;
-  name;
-  email;
-  idea1;
-  idea2;
-  idea3;
-
-  constructor(
-    id: string,
-    name: string,
-    email: string | undefined,
-    idea1: string | undefined,
-    idea2: string | undefined,
-    idea3: string | undefined
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.idea1 = idea1;
-    this.idea2 = idea2;
-    this.idea3 = idea3;
-  }
-
-  giftIdeasComplete() {
-    return this.idea1 && this.idea2 && this.idea3;
-  }
-}
 interface Props {
   userData: UserDataType[];
   rerenderParent: Function;
@@ -64,7 +35,8 @@ const UserTable: NextPage<Props> = (props) => {
           user.email,
           user.idea1,
           user.idea2,
-          user.idea3
+          user.idea3,
+          user.gettingGiftFor
         )
     );
     setUserData(userData);
