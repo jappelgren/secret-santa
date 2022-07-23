@@ -22,6 +22,8 @@ export const UserDataAllRequired = z.object({
   gettingGiftFor: z.optional(z.string()),
 });
 
+export type UserDataAllRequiredType = z.infer<typeof UserDataAllRequired>
+
 export const AdminData = z.object({
   id: z.string(),
   userName: z.string(),

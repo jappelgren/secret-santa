@@ -1,5 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { MsgResponseType, UserDataClass, UserDataType } from '../../../models';
+import {
+  MsgResponseType,
+  UserDataAllRequiredType,
+  UserDataClass,
+  UserDataType,
+} from '../../../models';
 import { assignPairs, getUserData, sendEmail } from '../../../utils';
 
 export default async function handler(
@@ -10,6 +15,7 @@ export default async function handler(
     switch (req.method) {
       case 'GET':
         const allUsers = await getUserData();
+
         const allUsersHaveSubmitted = new Set(
           allUsers.map((user: UserDataType) => {
             const tempUser = new UserDataClass(
@@ -34,16 +40,30 @@ export default async function handler(
           return;
         }
 
-        const assignedPairs = assignPairs(allUsers);
-        sendEmail('justinappelgren@gmail.com', 'Justy Baby')
+        const assignedPairs: UserDataAllRequiredType[] = await assignPairs(
+          allUsers
+        );
+
+        for (let user of assignedPairs) {
+          let recipient: any = assignedPairs.find(
+            (r) => r.name === user.gettingGiftFor
+          );
+
+          setTimeout(() => {
+            sendEmail(user, recipient);
+          }, 2000);
+        }
+
         res.send({
-          msg: `All users have submitted their lists and have been assigned random recipients.`,
+          msg: `All users have submitted their lists, have been assigned random recipients and have been emailed.`,
         });
+
         break;
       default:
         res.send({
           msg: `Endpoint does not support ${req.method} request method.`,
         });
+        
         break;
     }
   } catch (error) {
