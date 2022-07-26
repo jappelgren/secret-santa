@@ -102,13 +102,17 @@ export const sendEmail = (
       recipient.idea3 as string,
     ]) as string;
   } else {
-    throw new Error('Shit broke.');
+    throw new Error(
+      `An error occurred while creating email template. Something is probably missing from one of these objects.
+      Recipient: ${JSON.stringify(recipient)}
+      Giver: ${JSON.stringify(giver)}`
+    );
   }
 
   let params = {
     Source: 'santa-gabe@justinappelgren.io',
     Destination: {
-      ToAddresses: [recipient.email],
+      ToAddresses: [giver.email],
     },
     ReplyToAddresses: [],
     Message: {
@@ -162,11 +166,15 @@ const emailTemplate = (
       <p>Great news!</p>
       <p>All participants have finished filling out their gift ideas and we have selected the person for whom you will be getting a gift.  That person is: 
       <h2>${capitalizeString(recipient)}</h2></p> 
-      <p>${capitalizeString(recipient)} has come up with the following ideas:</p>
+      <p>${capitalizeString(
+        recipient
+      )} has come up with the following ideas:</p>
       <ul>
         ${recipientList.map((item) => `<li>${item}</li>`).join('\n')}
       </ul>
-      <p>Please buy ${capitalizeString(recipient)} one of these items or something of your own choosing.</p>
+      <p>Please buy ${capitalizeString(
+        recipient
+      )} one of these items or something of your own choosing.</p>
       <p>See you on Christmas.</p>
       <p>Love,</p>
       <p style="font-size: x-large; text-align: left; font-family: 'Pacifico', cursive;">Santa Gabe</p>

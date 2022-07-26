@@ -2,6 +2,8 @@ import { NextComponentType } from 'next';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { MsgResponse, UserData } from '../../models';
+import Modal from '../Styled/Modal/Modal';
+import Button from '../Styled/Button/Button';
 
 const Login: NextComponentType = () => {
   const router = useRouter();
@@ -9,6 +11,7 @@ const Login: NextComponentType = () => {
   const [inputValue, setInputValue] = useState('');
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +37,11 @@ const Login: NextComponentType = () => {
   };
   return (
     <div className="flex flex-col items-center justify-center h-96">
+      <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
+        wow
+        <Button onClickProp={() => setModalOpen(false)}> Close </Button>
+      </Modal>
+      <button onClick={() => setModalOpen(true)}>Open Modal</button>
       <form
         className="flex flex-col items-center justify-center"
         onSubmit={(e: FormEvent<HTMLFormElement>) => handleSubmit(e)}
