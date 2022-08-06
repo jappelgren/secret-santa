@@ -5,7 +5,7 @@ import {
   UserDataClass,
   UserDataType,
 } from '../../../models';
-import { assignPairs, getUserData, sendEmail } from '../../../utils';
+import { assignPairs, getUserData, sendAssignedPairsEmails } from '../../../utils';
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,7 +13,7 @@ export default async function handler(
 ) {
   try {
     switch (req.method) {
-      case 'GET':
+      case 'POST':
         const allUsers = await getUserData();
 
         const allUsersHaveSubmitted = new Set(
@@ -50,7 +50,7 @@ export default async function handler(
           );
 
           setTimeout(() => {
-            sendEmail(user, recipient);
+            sendAssignedPairsEmails(user, recipient);
           }, 2000);
         }
 
